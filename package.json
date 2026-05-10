@@ -1,21 +1,35 @@
 {
-  "name": "kidsmath",
-  "private": true,
+  "name": "numiverse",
   "version": "0.0.1",
-  "description": "数感星球 - 儿童数学学习平台",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "private": true,
+  "description": "数感星球 NumiVerse - 儿童数学学习平台",
   "scripts": {
-    "dev": "pnpm --filter child dev",
-    "dev:server": "npm run start:dev --workspace=apps/server",
-    "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck"
+    "dev": "turbo run dev",
+    "dev:child": "pnpm --filter child dev",
+    "dev:parent": "pnpm --filter @kidsmath/parent dev",
+    "dev:server": "pnpm --filter server-app start:dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.0",
+    "turbo": "^1.13.0",
     "typescript": "^5.4.0"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.1.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

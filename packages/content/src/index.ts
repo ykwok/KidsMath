@@ -1,3 +1,3 @@
-// Content data exports
-export const APP_NAME = '数感星球';
-export const APP_VERSION = '0.0.1';
+export type { LevelData, StageData } from "./types/level-data";
+
+export { level01Data } from "./levels/level-01";

@@ -1,2 +1,2 @@
-// Shared UI components
-export {};
+export { Button } from "./Button";
+export type { ButtonProps } from "./Button";

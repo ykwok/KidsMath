@@ -33,3 +33,12 @@ pnpm-debug.log*
 
 # Testing
 coverage/
+
+# Turborepo
+.turbo/
+
+# Agent context
+.agent_context/
+
+# Lock files (use pnpm-lock.yaml only)
+package-lock.json
