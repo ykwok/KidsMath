@@ -3,8 +3,13 @@
   "private": true,
   "version": "0.0.1",
   "description": "数感星球 - 儿童数学学习平台",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "pnpm --filter child dev",
+    "dev:server": "npm run start:dev --workspace=apps/server",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck"
