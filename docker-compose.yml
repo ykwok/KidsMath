@@ -18,6 +18,19 @@ services:
       timeout: 5s
       retries: 5
 
+  init:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+      target: builder
+    container_name: kidsmath-init
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/kidsmath?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "cd apps/server && npx prisma db push --skip-generate && npx ts-node src/seed/seed.ts"
+
   server:
     build:
       context: .
@@ -30,9 +43,9 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      postgres:
-        condition: service_healthy
-    command: sh -c "npx prisma db push --skip-generate && npx ts-node src/seed/seed.ts && node dist/main.js"
+      init:
+        condition: service_completed_successfully
+    command: ["node", "dist/main.js"]
 
 volumes:
   postgres_data:
