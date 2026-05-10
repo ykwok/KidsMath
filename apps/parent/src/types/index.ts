@@ -1,11 +1,19 @@
-export type Emotion = '开心' | '困惑' | '无聊' | '兴奋';
+import type {
+  DailyReport as SharedDailyReport,
+  Level as SharedLevel,
+  User as SharedUser,
+} from "@kidsmath/shared";
+
+export type { SharedDailyReport, SharedLevel, SharedUser };
+
+export type Emotion = "开心" | "困惑" | "无聊" | "兴奋";
 
 export interface Child {
   id: string;
   name: string;
   avatar: string;
   age: number;
-  stage: '萌芽期' | '探索期' | '飞跃期';
+  stage: "萌芽期" | "探索期" | "飞跃期";
   learningDay: number;
 }
 
@@ -60,4 +68,4 @@ export interface FAQ {
   tags: string[];
 }
 
-export type TabKey = 'home' | 'report' | 'tips' | 'profile';
+export type TabKey = "home" | "report" | "tips" | "profile";

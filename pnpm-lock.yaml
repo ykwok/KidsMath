@@ -113,6 +113,12 @@ importers:
 
   apps/parent:
     dependencies:
+      "@kidsmath/shared":
+        specifier: workspace:^
+        version: link:../../packages/shared
+      axios:
+        specifier: ^1.16.0
+        version: 1.16.0
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -138,6 +144,9 @@ importers:
         specifier: ^4.4.0
         version: 4.5.7(@types/react@18.3.28)(react@18.3.1)
     devDependencies:
+      "@types/node":
+        specifier: ^24.0.0
+        version: 24.12.3
       "@types/react":
         specifier: ^18.2.37
         version: 18.3.28
@@ -2951,6 +2960,12 @@ packages:
       }
     engines: { node: ">= 0.4" }
 
+  axios@1.16.0:
+    resolution:
+      {
+        integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==,
+      }
+
   babel-jest@30.4.1:
     resolution:
       {
@@ -4291,6 +4306,18 @@ packages:
       {
         integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==,
       }
+
+  follow-redirects@1.16.0:
+    resolution:
+      {
+        integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==,
+      }
+    engines: { node: ">=4.0" }
+    peerDependencies:
+      debug: "*"
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   for-each@0.3.5:
     resolution:
@@ -6337,6 +6364,13 @@ packages:
         integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==,
       }
     engines: { node: ">= 0.10" }
+
+  proxy-from-env@2.1.0:
+    resolution:
+      {
+        integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==,
+      }
+    engines: { node: ">=10" }
 
   punycode@2.3.1:
     resolution:
@@ -9602,6 +9636,14 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
+  axios@1.16.0:
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.5
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+
   babel-jest@30.4.1(@babel/core@7.29.0):
     dependencies:
       "@babel/core": 7.29.0
@@ -10550,6 +10592,8 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.4.2: {}
+
+  follow-redirects@1.16.0: {}
 
   for-each@0.3.5:
     dependencies:
@@ -11875,6 +11919,8 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  proxy-from-env@2.1.0: {}
 
   punycode@2.3.1: {}
 

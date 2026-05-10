@@ -1,51 +1,107 @@
-import { useState } from 'react';
-import { Search, Clock, Package, MessageCircle, Send, X } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { BottomNav } from '@/components/BottomNav';
-import { mockGameTips, mockFAQs } from '@/data/mock';
+import { useState, useEffect } from "react";
+import { Search, Clock, Package, MessageCircle, Send, X } from "lucide-react";
+import { Header } from "@/components/Header";
+import { BottomNav } from "@/components/BottomNav";
+import { mockGameTips, mockFAQs } from "@/data/mock";
+import { getTodayRecommended, type LevelApi } from "@/api/levels";
 
 interface ChatMessage {
-  role: 'user' | 'ai';
+  role: "user" | "ai";
   content: string;
 }
 
+function levelToGameTip(level: LevelApi, index: number) {
+  const templates = [
+    {
+      time: "5 分钟",
+      materials: "纸、笔",
+      steps: `今日推荐关卡「${level.title}」：${level.description}。建议家长陪同孩子一起完成，观察孩子在「${level.stage}」环节的表现。`,
+      category: level.module || "数与量",
+    },
+    {
+      time: "8 分钟",
+      materials: "积木或日常物品",
+      steps: `结合关卡「${level.title}」，用实物演示${level.stage}概念。让孩子动手操作，加深理解。`,
+      category: level.module || "比较与运算",
+    },
+    {
+      time: "10 分钟",
+      materials: "纸、笔、小道具",
+      steps: `挑战进阶：在「${level.title}」基础上，引导孩子用自己的话描述解题思路，培养数学表达能力。`,
+      category: level.module || "逻辑与空间",
+    },
+  ];
+  const t = templates[index % templates.length];
+  return {
+    id: level.id,
+    title: level.title,
+    time: t.time,
+    materials: t.materials,
+    steps: t.steps,
+    category: t.category,
+  };
+}
+
 export function TipsPage() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'ai', content: '你好！我是数感星球 AI 教练，有什么关于孩子数学启蒙的问题吗？' },
+    {
+      role: "ai",
+      content: "你好！我是数感星球 AI 教练，有什么关于孩子数学启蒙的问题吗？",
+    },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
+  const [todayLevel, setTodayLevel] = useState<LevelApi | null>(null);
+  const [games, setGames] = useState(mockGameTips);
+
+  useEffect(() => {
+    getTodayRecommended()
+      .then((level) => {
+        setTodayLevel(level);
+        setGames([
+          levelToGameTip(level, 0),
+          levelToGameTip(level, 1),
+          levelToGameTip(level, 2),
+        ]);
+      })
+      .catch(() => {
+        // Keep mock games as fallback
+        setGames(mockGameTips);
+      });
+  }, []);
 
   const handleSearch = (q: string) => {
     setQuery(q);
   };
 
-  const handleFAQClick = (faq: typeof mockFAQs[0]) => {
+  const handleFAQClick = (faq: (typeof mockFAQs)[0]) => {
     setChatOpen(true);
     setMessages((prev) => [
       ...prev,
-      { role: 'user', content: faq.question },
-      { role: 'ai', content: faq.answer },
+      { role: "user", content: faq.question },
+      { role: "ai", content: faq.answer },
     ]);
   };
 
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = input.trim();
-    setInput('');
-    setMessages((prev) => [...prev, { role: 'user', content: userMsg }]);
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
 
     // Simple keyword matching
-    const matched = mockFAQs.find((f) =>
-      f.tags.some((t) => userMsg.includes(t)) || userMsg.includes(f.question.slice(0, 6))
+    const matched = mockFAQs.find(
+      (f) =>
+        f.tags.some((t) => userMsg.includes(t)) ||
+        userMsg.includes(f.question.slice(0, 6)),
     );
 
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
-          role: 'ai',
+          role: "ai",
           content: matched
             ? matched.answer
             : '感谢你的提问！AI 教练正在学习中。建议您可以参考"每日推荐"里的亲子游戏，或联系客服获取更专业的建议。',
@@ -54,8 +110,8 @@ export function TipsPage() {
     }, 600);
   };
 
-  const filteredGames = mockGameTips.filter((g) =>
-    query ? g.title.includes(query) || g.category.includes(query) : true
+  const filteredGames = games.filter((g) =>
+    query ? g.title.includes(query) || g.category.includes(query) : true,
   );
 
   return (
@@ -76,7 +132,11 @@ export function TipsPage() {
 
         {/* Game Cards */}
         <div>
-          <h3 className="text-sm font-semibold text-warm-700 mb-3">今日 3 个亲子数感小游戏</h3>
+          <h3 className="text-sm font-semibold text-warm-700 mb-3">
+            {todayLevel
+              ? `今日推荐：${todayLevel.title}`
+              : "今日 3 个亲子数感小游戏"}
+          </h3>
           <div className="space-y-3">
             {filteredGames.map((game, i) => (
               <div key={game.id} className="card">
@@ -84,7 +144,9 @@ export function TipsPage() {
                   <span className="w-5 h-5 rounded-full bg-brand-500 text-white text-[10px] font-bold flex items-center justify-center">
                     {i + 1}
                   </span>
-                  <h4 className="text-sm font-semibold text-warm-700">{game.title}</h4>
+                  <h4 className="text-sm font-semibold text-warm-700">
+                    {game.title}
+                  </h4>
                   <span className="ml-auto px-2 py-0.5 bg-warm-100 rounded text-[10px] text-warm-500">
                     {game.category}
                   </span>
@@ -97,7 +159,9 @@ export function TipsPage() {
                     <Package className="w-3 h-3" /> {game.materials}
                   </span>
                 </div>
-                <p className="text-xs text-warm-600 leading-relaxed">{game.steps}</p>
+                <p className="text-xs text-warm-600 leading-relaxed">
+                  {game.steps}
+                </p>
               </div>
             ))}
           </div>
@@ -109,7 +173,9 @@ export function TipsPage() {
             <MessageCircle className="w-4 h-4 text-brand-500" />
             <h3 className="text-sm font-semibold text-warm-700">AI 教练答疑</h3>
           </div>
-          <p className="text-xs text-warm-400 mb-3">点击常见问题快速获取解答，或输入您的问题</p>
+          <p className="text-xs text-warm-400 mb-3">
+            点击常见问题快速获取解答，或输入您的问题
+          </p>
           <div className="flex flex-wrap gap-2">
             {mockFAQs.map((faq) => (
               <button
@@ -141,11 +207,18 @@ export function TipsPage() {
                   🤖
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-warm-700">AI 教练</h4>
-                  <p className="text-[10px] text-warm-400">随时为您解答育儿问题</p>
+                  <h4 className="text-sm font-semibold text-warm-700">
+                    AI 教练
+                  </h4>
+                  <p className="text-[10px] text-warm-400">
+                    随时为您解答育儿问题
+                  </p>
                 </div>
               </div>
-              <button onClick={() => setChatOpen(false)} className="p-1 rounded-lg hover:bg-warm-100">
+              <button
+                onClick={() => setChatOpen(false)}
+                className="p-1 rounded-lg hover:bg-warm-100"
+              >
                 <X className="w-5 h-5 text-warm-400" />
               </button>
             </div>
@@ -153,12 +226,15 @@ export function TipsPage() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  key={i}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
                   <div
                     className={`max-w-[80%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-brand-500 text-white rounded-br-md'
-                        : 'bg-warm-100 text-warm-700 rounded-bl-md'
+                      msg.role === "user"
+                        ? "bg-brand-500 text-white rounded-br-md"
+                        : "bg-warm-100 text-warm-700 rounded-bl-md"
                     }`}
                   >
                     {msg.content}
@@ -173,7 +249,7 @@ export function TipsPage() {
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder="输入您的问题..."
                   className="flex-1 px-3 py-2 bg-warm-50 rounded-xl text-sm outline-none border border-warm-100 focus:border-brand-300"
                 />

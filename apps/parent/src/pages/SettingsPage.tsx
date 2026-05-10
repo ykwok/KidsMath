@@ -1,30 +1,47 @@
-import { useState } from 'react';
-import { Bell, Moon, Shield, HelpCircle, ChevronRight, LogOut } from 'lucide-react';
-import { Header } from '@/components/Header';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Bell,
+  Moon,
+  Shield,
+  HelpCircle,
+  ChevronRight,
+  LogOut,
+} from "lucide-react";
+import { Header } from "@/components/Header";
+import { useAppStore } from "@/stores/useAppStore";
 
 export function SettingsPage() {
+  const navigate = useNavigate();
+  const { setToken, setUser } = useAppStore();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleItems = [
     {
       icon: Bell,
-      label: '每日学情推送',
+      label: "每日学情推送",
       value: notifications,
       onChange: setNotifications,
     },
     {
       icon: Moon,
-      label: '深色模式',
+      label: "深色模式",
       value: darkMode,
       onChange: setDarkMode,
     },
   ];
 
   const menuItems = [
-    { icon: Shield, label: '隐私政策', href: '#' },
-    { icon: HelpCircle, label: '帮助与反馈', href: '#' },
+    { icon: Shield, label: "隐私政策", href: "#" },
+    { icon: HelpCircle, label: "帮助与反馈", href: "#" },
   ];
+
+  const handleLogout = () => {
+    setToken(null);
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen pb-8">
@@ -34,7 +51,10 @@ export function SettingsPage() {
         {/* Toggle Items */}
         <div className="card divide-y divide-warm-100">
           {toggleItems.map((item) => (
-            <div key={item.label} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+            <div
+              key={item.label}
+              className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-warm-50 flex items-center justify-center">
                   <item.icon className="w-4 h-4 text-warm-500" />
@@ -44,12 +64,12 @@ export function SettingsPage() {
               <button
                 onClick={() => item.onChange(!item.value)}
                 className={`relative w-11 h-6 rounded-full transition-colors ${
-                  item.value ? 'bg-brand-500' : 'bg-warm-200'
+                  item.value ? "bg-brand-500" : "bg-warm-200"
                 }`}
               >
                 <span
                   className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                    item.value ? 'translate-x-5' : ''
+                    item.value ? "translate-x-5" : ""
                   }`}
                 />
               </button>
@@ -82,7 +102,10 @@ export function SettingsPage() {
         </div>
 
         {/* Logout */}
-        <button className="w-full py-3 flex items-center justify-center gap-2 text-sm text-danger bg-white rounded-xl border border-red-100 hover:bg-red-50 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="w-full py-3 flex items-center justify-center gap-2 text-sm text-danger bg-white rounded-xl border border-red-100 hover:bg-red-50 transition-colors"
+        >
           <LogOut className="w-4 h-4" /> 退出登录
         </button>
       </div>
