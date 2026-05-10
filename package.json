@@ -1,0 +1,12 @@
+{
+  "name": "kidsmath",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:server": "npm run start:dev --workspace=apps/server"
+  }
+}
