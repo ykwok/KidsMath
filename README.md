@@ -53,6 +53,29 @@ pnpm db:migrate        # 运行数据库迁移
 pnpm db:seed           # 初始化种子数据
 ```
 
+### Docker Compose（一键启动）
+
+无需手动安装 PostgreSQL，使用 Docker Compose 一键启动开发环境：
+
+```bash
+# 一键启动 PostgreSQL + 后端服务
+docker compose up -d
+
+# 查看日志
+docker compose logs -f server
+
+# 停止
+docker compose down
+
+# 重建（代码变更后）
+docker compose up -d --build
+```
+
+启动后访问：
+- 后端 API：`http://localhost:3000`
+- 健康检查：`http://localhost:3000/api/health`
+- PostgreSQL：`localhost:5432`（用户名/密码：`postgres/postgres`）
+
 ## 目录结构
 
 ```
