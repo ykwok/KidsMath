@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 declare global {
   interface SpeechRecognition extends EventTarget {
     lang: string;
@@ -5,8 +6,12 @@ declare global {
     interimResults: boolean;
     maxAlternatives: number;
     onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-    onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
-    onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+    onresult:
+      | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void)
+      | null;
+    onerror:
+      | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void)
+      | null;
     onend: ((this: SpeechRecognition, ev: Event) => void) | null;
     start(): void;
     stop(): void;

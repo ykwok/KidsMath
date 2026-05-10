@@ -1,9 +1,10 @@
 export interface LearningRecord {
   id: string;
-  userId: string;
+  childId: string;
   levelId: string;
-  stageId: string;
   correct: boolean;
-  timeSpentMs: number;
+  timeSpent: number;
+  answer?: string;
+  emotion?: string;
   createdAt: string;
 }

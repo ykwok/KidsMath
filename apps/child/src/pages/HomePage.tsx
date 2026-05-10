@@ -1,40 +1,67 @@
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Star, TreePine } from 'lucide-react';
-import { useGameStore } from '@/store/gameStore';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Star, TreePine, Sparkles } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { useGameStore } from "@/store/gameStore";
+import { fetchTodayRecommended, type ApiLevel } from "@/api/levels";
 
 const PLANETS = [
   {
-    id: 'counting',
-    name: '计数星云',
-    color: 'from-nebula-purple to-nebula-pink',
-    shadow: 'shadow-nebula-purple/30',
-    icon: '🔢',
-    path: '/planet/counting',
+    id: "counting",
+    name: "计数星云",
+    color: "from-nebula-purple to-nebula-pink",
+    shadow: "shadow-nebula-purple/30",
+    icon: "🔢",
+    path: "/planet/counting",
     unlocked: true,
   },
   {
-    id: 'comparing',
-    name: '比较黑洞',
-    color: 'from-gray-700 to-gray-900',
-    shadow: 'shadow-gray-900/50',
-    icon: '⚖️',
-    path: '#',
+    id: "comparing",
+    name: "比较黑洞",
+    color: "from-gray-700 to-gray-900",
+    shadow: "shadow-gray-900/50",
+    icon: "⚖️",
+    path: "#",
     unlocked: false,
   },
   {
-    id: 'logic',
-    name: '逻辑迷宫',
-    color: 'from-emerald-800 to-emerald-950',
-    shadow: 'shadow-emerald-900/50',
-    icon: '🧩',
-    path: '#',
+    id: "logic",
+    name: "逻辑迷宫",
+    color: "from-emerald-800 to-emerald-950",
+    shadow: "shadow-emerald-900/50",
+    icon: "🧩",
+    path: "#",
     unlocked: false,
   },
 ];
 
 export function HomePage() {
-  const { stars, treeLevel } = useGameStore();
+  const { stars, treeLevel, levelStatuses } = useGameStore();
+  const [todayLevel, setTodayLevel] = useState<ApiLevel | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchTodayRecommended()
+      .then((data) => {
+        if (!cancelled) setTodayLevel(data);
+      })
+      .catch(() => {
+        if (!cancelled) setTodayLevel(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Fallback: local rule - recommend next unlocked level
+  const recommendedLocal = useMemo(() => {
+    const next = levelStatuses.find((l) => l.status !== "completed");
+    return next ? next.levelId : 1;
+  }, [levelStatuses]);
+
+  const recommendedLevelId = todayLevel
+    ? parseInt(todayLevel.id, 10) || todayLevel.order || recommendedLocal
+    : recommendedLocal;
 
   return (
     <div className="h-full flex flex-col px-5 pt-6 pb-4 relative overflow-hidden">
@@ -57,22 +84,56 @@ export function HomePage() {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 relative z-10">
+      <div className="flex items-center justify-between mb-4 relative z-10">
         <div className="flex items-center gap-2">
           <TreePine size={20} className="text-kid-success" />
-          <span className="text-sm font-medium text-white/80">Lv.{treeLevel}</span>
+          <span className="text-sm font-medium text-white/80">
+            Lv.{treeLevel}
+          </span>
         </div>
         <div className="flex items-center gap-2 bg-space-700/50 px-3 py-1.5 rounded-full">
-          <Star size={16} className="text-achievement-gold fill-achievement-gold" />
-          <span className="text-sm font-bold text-achievement-gold">{stars}</span>
+          <Star
+            size={16}
+            className="text-achievement-gold fill-achievement-gold"
+          />
+          <span className="text-sm font-bold text-achievement-gold">
+            {stars}
+          </span>
         </div>
       </div>
+
+      {/* Daily recommendation */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 mb-6"
+      >
+        <Link to={`/level/${recommendedLevelId}`}>
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            className="w-full rounded-2xl bg-gradient-to-r from-planet-orange/20 to-nebula-purple/20 border border-planet-orange/30 p-4 flex items-center gap-3"
+          >
+            <div className="w-10 h-10 rounded-full bg-planet-orange/20 flex items-center justify-center">
+              <Sparkles size={20} className="text-planet-orange" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-white/50">今日推荐</p>
+              <p className="text-sm font-bold text-white">
+                {todayLevel ? todayLevel.name : `关卡 ${recommendedLevelId}`}
+              </p>
+            </div>
+            <span className="text-xs text-planet-orange font-medium">
+              开始 →
+            </span>
+          </motion.div>
+        </Link>
+      </motion.div>
 
       {/* Title */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-white mb-8 text-center text-shadow"
+        className="text-2xl font-bold text-white mb-8 text-center text-shadow relative z-10"
       >
         选择你的星球
       </motion.h1>
@@ -84,7 +145,7 @@ export function HomePage() {
             key={planet.id}
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.2 + index * 0.15, type: 'spring' }}
+            transition={{ delay: 0.2 + index * 0.15, type: "spring" }}
             className="relative w-full max-w-xs"
           >
             {planet.unlocked ? (
@@ -98,7 +159,9 @@ export function HomePage() {
                     {planet.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">{planet.name}</h3>
+                    <h3 className="text-lg font-bold text-white">
+                      {planet.name}
+                    </h3>
                     <p className="text-xs text-white/70">点击进入探索</p>
                   </div>
                   <motion.div
@@ -109,12 +172,16 @@ export function HomePage() {
                 </motion.div>
               </Link>
             ) : (
-              <div className={`w-full h-28 rounded-3xl bg-gradient-to-br ${planet.color} opacity-60 flex items-center gap-4 px-6 relative overflow-hidden`}>
+              <div
+                className={`w-full h-28 rounded-3xl bg-gradient-to-br ${planet.color} opacity-60 flex items-center gap-4 px-6 relative overflow-hidden`}
+              >
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-3xl grayscale">
                   {planet.icon}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white/60">{planet.name}</h3>
+                  <h3 className="text-lg font-bold text-white/60">
+                    {planet.name}
+                  </h3>
                   <p className="text-xs text-white/40">即将解锁</p>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">

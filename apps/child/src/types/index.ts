@@ -1,15 +1,9 @@
-export interface User {
-  id: string;
-  nickname: string;
-  role: 'child' | 'parent';
-  birthday?: string;
-  avatar?: string;
-  createdAt: string;
-}
+import type { User } from "@kidsmath/shared";
+export type { User };
 
 export interface LevelStatus {
   levelId: number;
-  status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
+  status: "locked" | "unlocked" | "in_progress" | "completed";
   stars: number;
   bestScore: number;
 }
@@ -33,7 +27,7 @@ export interface GameState {
 }
 
 export interface CPAAnswer {
-  stage: 'C' | 'P' | 'A';
+  stage: "C" | "P" | "A";
   questionIndex: number;
   userAnswer: string;
   isCorrect: boolean;
@@ -50,12 +44,12 @@ export interface LevelResult {
 }
 
 export type OnboardingStep =
-  | 'welcome'
-  | 'role'
-  | 'profile'
-  | 'assessment'
-  | 'passport'
-  | 'done';
+  | "welcome"
+  | "role"
+  | "profile"
+  | "assessment"
+  | "passport"
+  | "done";
 
 export interface AssessmentAnswer {
   questionId: number;
