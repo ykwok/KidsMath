@@ -3,8 +3,10 @@ import apiClient from "./client";
 export interface ApiLevel {
   id: string;
   name: string;
+  title?: string;
+  description?: string;
   order: number;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty?: "easy" | "medium" | "hard";
   module: string;
   ageGroup?: string;
   stage?: string;

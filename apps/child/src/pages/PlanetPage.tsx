@@ -26,17 +26,27 @@ export function PlanetPage() {
     };
   }, [module]);
 
-  // Fallback to local LEVELS if API is unavailable
+  // Merge API metadata with local level content (questions remain local for offline play)
   const levels =
     apiLevels && apiLevels.length > 0
-      ? apiLevels.map((l) => ({
-          id: parseInt(l.id, 10) || l.order,
-          title: l.name,
-          description: `难度: ${l.difficulty}`,
-          module:
-            (l.module as "counting" | "comparing" | "logic") || "counting",
-          questions: [],
-        }))
+      ? apiLevels.map((l) => {
+          const localLevel = LEVELS.find(
+            (lvl) => lvl.id === (parseInt(l.id, 10) || l.order),
+          );
+          return {
+            id: parseInt(l.id, 10) || l.order,
+            title: l.name || localLevel?.title || `关卡 ${l.order}`,
+            description:
+              l.description ||
+              localLevel?.description ||
+              `难度: ${l.difficulty}`,
+            module:
+              (l.module as "counting" | "comparing" | "logic") ||
+              localLevel?.module ||
+              "counting",
+            questions: localLevel?.questions || [],
+          };
+        })
       : LEVELS.filter((l) => l.module === module);
 
   const planetName =
