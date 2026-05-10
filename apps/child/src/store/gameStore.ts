@@ -109,7 +109,7 @@ export const useGameStore = create<GameStore>()(
             childId: user.id,
             levelId: String(result.levelId),
             correct,
-            timeSpent: 0,
+            timeSpent: result.timeSpent || 0,
             answer: result.answers.map((a) => a.userAnswer).join(","),
             emotion: result.stars >= 2 ? "happy" : "neutral",
           };

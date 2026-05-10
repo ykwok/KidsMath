@@ -41,6 +41,7 @@ export interface LevelResult {
   answers: CPAAnswer[];
   newBadge?: Badge;
   treeGrew: boolean;
+  timeSpent: number;
 }
 
 export type OnboardingStep =
