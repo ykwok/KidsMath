@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateLearningRecordDto, QueryLearningRecordsDto } from './learning-records.dto';
+import {
+  CreateLearningRecordDto,
+  QueryLearningRecordsDto,
+} from './learning-records.dto';
+import type { LearningRecord } from '@kidsmath/shared';
 
 @Injectable()
 export class LearningRecordsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateLearningRecordDto) {
-    return this.prisma.learningRecord.create({
+  async create(dto: CreateLearningRecordDto): Promise<LearningRecord> {
+    const record = await this.prisma.learningRecord.create({
       data: {
         childId: dto.childId,
         levelId: dto.levelId,
@@ -28,6 +32,7 @@ export class LearningRecordsService {
         },
       },
     });
+    return this.mapRecord(record);
   }
 
   async findAll(query: QueryLearningRecordsDto) {
@@ -64,7 +69,7 @@ export class LearningRecordsService {
     ]);
 
     return {
-      data,
+      data: data.map((r) => this.mapRecord(r)),
       meta: {
         page,
         per_page: perPage,
@@ -88,6 +93,19 @@ export class LearningRecordsService {
       incorrectAttempts: totalAttempts - correctAttempts,
       correctRate: totalAttempts > 0 ? correctAttempts / totalAttempts : 0,
       totalTimeSpent,
+    };
+  }
+
+  private mapRecord(prismaRecord: any): LearningRecord {
+    return {
+      id: prismaRecord.id,
+      childId: prismaRecord.childId,
+      levelId: prismaRecord.levelId,
+      correct: prismaRecord.correct,
+      timeSpent: prismaRecord.timeSpent,
+      answer: prismaRecord.answer ?? undefined,
+      emotion: prismaRecord.emotion ?? undefined,
+      createdAt: prismaRecord.createdAt.toISOString(),
     };
   }
 }

@@ -6,6 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import type { ApiResponse } from '@kidsmath/shared';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -24,7 +25,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     if (typeof exceptionResponse === 'string') {
       message = exceptionResponse;
-    } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+    } else if (
+      typeof exceptionResponse === 'object' &&
+      exceptionResponse !== null
+    ) {
       const res = exceptionResponse as Record<string, any>;
       let msg = res.message || message;
       if (Array.isArray(msg)) {
@@ -39,7 +43,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       `${request.method} ${request.url} ${status} - ${message}`,
     );
 
-    response.status(status).json({
+    const body: ApiResponse<null> = {
       success: false,
       data: null,
       error: {
@@ -47,6 +51,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message,
         details,
       },
-    });
+    };
+
+    response.status(status).json(body);
   }
 }

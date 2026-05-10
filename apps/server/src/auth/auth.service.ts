@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { WechatLoginDto, GuestLoginDto } from './auth.dto';
+import type { AuthResponse, User } from '@kidsmath/shared';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async wechatLogin(dto: WechatLoginDto) {
+  async wechatLogin(dto: WechatLoginDto): Promise<AuthResponse> {
     // MVP: mock WeChat login using code as openId
     const openId = `wx_mock_${dto.code}`;
 
@@ -34,10 +35,13 @@ export class AuthService {
       role: user.role,
     });
 
-    return { token, user };
+    return {
+      token,
+      user: this.mapUser(user),
+    };
   }
 
-  async guestLogin(dto: GuestLoginDto) {
+  async guestLogin(dto: GuestLoginDto): Promise<AuthResponse> {
     const user = await this.prisma.user.create({
       data: {
         nickname: dto.nickname || `游客_${Date.now().toString(36)}`,
@@ -50,6 +54,27 @@ export class AuthService {
       role: user.role,
     });
 
-    return { token, user };
+    return {
+      token,
+      user: this.mapUser(user),
+    };
+  }
+
+  private mapUser(prismaUser: any): User {
+    return {
+      id: prismaUser.id,
+      openId: prismaUser.openId ?? undefined,
+      unionId: prismaUser.unionId ?? undefined,
+      phone: prismaUser.phone ?? undefined,
+      nickname: prismaUser.nickname ?? undefined,
+      avatar: prismaUser.avatar ?? undefined,
+      role: prismaUser.role,
+      parentId: prismaUser.parentId ?? undefined,
+      birthDate: prismaUser.birthDate
+        ? prismaUser.birthDate.toISOString()
+        : undefined,
+      createdAt: prismaUser.createdAt.toISOString(),
+      updatedAt: prismaUser.updatedAt.toISOString(),
+    };
   }
 }

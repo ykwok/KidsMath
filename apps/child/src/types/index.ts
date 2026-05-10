@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   nickname: string;
-  role: 'child' | 'parent';
+  role: "child" | "parent";
   birthday?: string;
   avatar?: string;
   createdAt: string;
@@ -9,7 +9,7 @@ export interface User {
 
 export interface LevelStatus {
   levelId: number;
-  status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
+  status: "locked" | "unlocked" | "in_progress" | "completed";
   stars: number;
   bestScore: number;
 }
@@ -33,7 +33,7 @@ export interface GameState {
 }
 
 export interface CPAAnswer {
-  stage: 'C' | 'P' | 'A';
+  stage: "C" | "P" | "A";
   questionIndex: number;
   userAnswer: string;
   isCorrect: boolean;
@@ -50,12 +50,12 @@ export interface LevelResult {
 }
 
 export type OnboardingStep =
-  | 'welcome'
-  | 'role'
-  | 'profile'
-  | 'assessment'
-  | 'passport'
-  | 'done';
+  | "welcome"
+  | "role"
+  | "profile"
+  | "assessment"
+  | "passport"
+  | "done";
 
 export interface AssessmentAnswer {
   questionId: number;
@@ -70,3 +70,6 @@ export interface VoiceState {
   transcript: string;
   confidence: number;
 }
+
+export { generateId } from "@kidsmath/shared";
+export type { Level } from "@kidsmath/shared";

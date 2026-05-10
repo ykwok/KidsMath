@@ -1,22 +1,21 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { LearningRecordsService } from './learning-records.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { CreateLearningRecordDto, QueryLearningRecordsDto } from './learning-records.dto';
+import {
+  CreateLearningRecordDto,
+  QueryLearningRecordsDto,
+} from './learning-records.dto';
+import type { LearningRecord } from '@kidsmath/shared';
 
 @Controller('api/v1/learning-records')
 @UseGuards(JwtAuthGuard)
 export class LearningRecordsController {
-  constructor(private readonly learningRecordsService: LearningRecordsService) {}
+  constructor(
+    private readonly learningRecordsService: LearningRecordsService,
+  ) {}
 
   @Post()
-  async create(@Body() dto: CreateLearningRecordDto) {
+  async create(@Body() dto: CreateLearningRecordDto): Promise<LearningRecord> {
     return this.learningRecordsService.create(dto);
   }
 

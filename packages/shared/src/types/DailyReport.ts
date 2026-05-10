@@ -1,9 +1,12 @@
 export interface DailyReport {
   id: string;
-  userId: string;
+  childId: string;
   date: string;
-  totalQuestions: number;
-  correctCount: number;
-  studyMinutes: number;
+  totalTime: number;
   levelsCompleted: number;
+  correctRate: number;
+  emotionSummary?: string;
+  tips?: string;
+  createdAt: string;
+  updatedAt: string;
 }

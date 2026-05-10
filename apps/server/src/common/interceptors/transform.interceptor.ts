@@ -6,26 +6,13 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T | null;
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, any>;
-  } | null;
-  meta?: {
-    page?: number;
-    per_page?: number;
-    total?: number;
-  };
-}
+import type { ApiResponse } from '@kidsmath/shared';
 
 @Injectable()
-export class TransformInterceptor<T>
-  implements NestInterceptor<T, ApiResponse<T>>
-{
+export class TransformInterceptor<T> implements NestInterceptor<
+  T,
+  ApiResponse<T>
+> {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -35,19 +22,24 @@ export class TransformInterceptor<T>
         if (data && typeof data === 'object' && 'success' in data) {
           return data as ApiResponse<T>;
         }
-        if (data && typeof data === 'object' && 'data' in data && 'meta' in data) {
+        if (
+          data &&
+          typeof data === 'object' &&
+          'data' in data &&
+          'meta' in data
+        ) {
           return {
             success: true,
             data: data.data,
             error: null,
             meta: data.meta,
-          };
+          } as ApiResponse<T>;
         }
         return {
           success: true,
           data,
           error: null,
-        };
+        } as ApiResponse<T>;
       }),
     );
   }

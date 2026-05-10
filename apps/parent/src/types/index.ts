@@ -1,11 +1,11 @@
-export type Emotion = '开心' | '困惑' | '无聊' | '兴奋';
+export type Emotion = "开心" | "困惑" | "无聊" | "兴奋";
 
 export interface Child {
   id: string;
   name: string;
   avatar: string;
   age: number;
-  stage: '萌芽期' | '探索期' | '飞跃期';
+  stage: "萌芽期" | "探索期" | "飞跃期";
   learningDay: number;
 }
 
@@ -60,4 +60,6 @@ export interface FAQ {
   tags: string[];
 }
 
-export type TabKey = 'home' | 'report' | 'tips' | 'profile';
+export type TabKey = "home" | "report" | "tips" | "profile";
+
+export { formatAccuracy } from "@kidsmath/shared";
