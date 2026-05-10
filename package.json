@@ -1,0 +1,16 @@
+{
+  "name": "kidsmath",
+  "private": true,
+  "version": "0.0.1",
+  "description": "数感星球 - 儿童数学学习平台",
+  "scripts": {
+    "dev": "pnpm --filter child dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
